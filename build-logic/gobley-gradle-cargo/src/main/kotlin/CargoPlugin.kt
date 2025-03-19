@@ -250,7 +250,7 @@ class CargoPlugin : Plugin<Project> {
                         )
                     )
                     dependsOn(rustUpTargetAddTask)
-                    if (cargoBuildVariant is CargoAndroidBuildVariant) {
+                    if (cargoBuildVariant is CargoAndroidBuildVariant && !cargoExtension.useCross.get()) {
                         val environmentVariables = cargoBuildVariant.rustTarget.ndkEnvVariables(
                             sdkRoot = androidDelegate.androidSdkRoot,
                             apiLevel = androidDelegate.androidMinSdk,
