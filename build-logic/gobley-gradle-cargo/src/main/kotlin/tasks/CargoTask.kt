@@ -28,27 +28,33 @@ abstract class CargoTask : CommandTask() {
     @get:Optional
     abstract val nightly: Property<Boolean>
 
+    @get:Input
+    @get:Optional
+    abstract val commandName: Property<String>
+
     @InternalGobleyGradleApi
     fun cargo(
         vararg argument: String,
         action: CommandSpec.() -> Unit = {},
-    ) = cargo.map { it as Any }.orElse("cargo").flatMap { cargo ->
-        if (cargo is File) {
-            command(cargo) {
-                if (nightly.orNull == true) {
-                    arguments("+nightly")
+    ) = cargo.map { it as Any }
+        .orElse(commandName.getOrElse("cargo"))
+        .flatMap { command ->
+            if (command is File) {
+                command(command) {
+                    if (nightly.orNull == true) {
+                        arguments("+nightly")
+                    }
+                    arguments(*argument)
+                    action()
                 }
-                arguments(*argument)
-                action()
-            }
-        } else {
-            command("cargo") {
-                if (nightly.orNull == true) {
-                    arguments("+nightly")
+            } else {
+                command(command as String) {
+                    if (nightly.orNull == true) {
+                        arguments("+nightly")
+                    }
+                    arguments(*argument)
+                    action()
                 }
-                arguments(*argument)
-                action()
             }
         }
-    }
 }

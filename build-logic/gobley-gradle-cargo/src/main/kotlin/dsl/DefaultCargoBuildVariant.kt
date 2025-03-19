@@ -36,6 +36,7 @@ abstract class DefaultCargoBuildVariant<out RustTargetT : RustTarget, out CargoB
         project.tasks.register<CargoBuildTask>({ +this@DefaultCargoBuildVariant }) {
             group = CargoPlugin.TASK_GROUP
             cargoPackage.set(extension.cargoPackage)
+            if (extension.useCross.get()) commandName.set("cross")
             profile.set(this@DefaultCargoBuildVariant.profile)
             target.set(this@DefaultCargoBuildVariant.rustTarget)
             features.set(this@DefaultCargoBuildVariant.features)

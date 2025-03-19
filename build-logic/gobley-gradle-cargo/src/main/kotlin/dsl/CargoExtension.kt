@@ -17,6 +17,7 @@ import gobley.gradle.rust.targets.RustAppleMobileTarget
 import gobley.gradle.rust.targets.RustPosixTarget
 import gobley.gradle.rust.targets.RustTarget
 import gobley.gradle.rust.targets.RustWindowsTarget
+import gobley.gradle.utils.command
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.plugins.DslObject
@@ -130,4 +131,17 @@ abstract class CargoExtension(final override val project: Project) : HasProject,
      */
     val checkCommand: Property<String> =
         project.objects.property<String>().convention("check")
+
+    /**
+     * Whether to use Cross for compilation.
+     */
+    @OptIn(InternalGobleyGradleApi::class)
+    val useCross: Property<Boolean> =
+        project.objects.property<Boolean>()
+            .convention(
+                project
+                    .command("cross") { arguments("--version") }
+                    .get()
+                    .run { statusCode == 0 }
+            )
 }
